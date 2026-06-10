@@ -637,6 +637,19 @@
             height: 100%;
             pointer-events: none;
         }
+
+        /* ─── Scroll Animations ─── */
+        .reveal-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -719,7 +732,7 @@
         </div>
     </section>
 
-    <section id="spesies" class="bg-white py-24 px-5 md:px-10">
+    <section id="spesies" class="py-24 px-5 md:px-10 reveal-section">
         <div class="max-w-[1068px] mx-auto">
             <div class="text-center mb-14">
                 <p class="text-xs font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3">Database Spesies</p>
@@ -742,7 +755,7 @@
         </div>
     </div>
 
-    <section id="deteksi" class="bg-white py-24 px-5 md:px-10">
+    <section id="deteksi" class="bg-white py-24 px-5 md:px-10 reveal-section">
         <div class="max-w-[960px] mx-auto">
             <div class="text-center mb-12">
                 <p class="text-xs font-semibold tracking-[0.15em] uppercase text-apple-link-blue mb-3">Coba Sekarang</p>
@@ -981,7 +994,7 @@
         </div>
     </section>
 
-    <footer class="bg-[#1d1d1f] py-12 px-5 md:px-10" style="border-top:1px solid rgba(255,255,255,0.08);">
+    <footer class="bg-apple-near-black py-10 px-5 md:px-10 reveal-section" style="border-top:1px solid rgba(255,255,255,0.08);">
         <div class="max-w-[1068px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <a href="#" aria-label="MeLamun - Beranda" class="shrink-0">
                 <img src="assets/logo-nav.png?v=3" alt="MeLamun" class="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity" width="211" height="64">
@@ -1586,6 +1599,27 @@
         setupDropzone('dropZone', 'imageInput', handleYoloFile);
         setupDropzone('dropZoneMN', 'imageInputMN', handleMNFile);
         setupDropzone('dropZoneCMP', 'imageInputCMP', handleCMPFile);
+
+        // ─── Scroll Animations ────────────────────────────────────────
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                } else {
+                    // Remove class when out of view so it animates again when scrolling up/down
+                    entry.target.classList.remove('is-visible');
+                }
+            });
+        }, revealOptions);
+
+        document.querySelectorAll('.reveal-section').forEach(section => {
+            revealObserver.observe(section);
+        });
     </script>
 </body>
 
