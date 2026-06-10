@@ -667,7 +667,7 @@
                 <div class="flex justify-center mb-6">
                     <span class="hero-badge">
                         <span class="hero-badge-dot"></span>
-                        AI-Powered &middot; YOLOv8 &amp; MobileNetv4
+                        YOLOv8 &amp; MobileNetv4
                     </span>
                 </div>
                 <h1 class="hero-title mb-5">Klasifikasi<br>Jenis Lamun</h1>
@@ -915,22 +915,24 @@
                             <div>
                                 <p class="type-caption text-apple-mid-gray mb-2 text-left font-semibold">YOLOv8</p>
                                 <div
-                                    class="image-container border border-apple-light-gray rounded-apple-md overflow-hidden w-full">
-                                    <img id="previewCMPYolo" alt="Preview YOLOv8"
-                                        style="display:block;max-width:100%;height:auto;">
-                                    <canvas id="bboxCanvasCMPYolo"></canvas>
+                                    class="border border-apple-light-gray rounded-apple-md overflow-hidden w-full bg-slate-50 flex items-center justify-center" style="height: 320px;">
+                                    <div class="image-container inline-block" style="max-width: 100%; max-height: 100%;">
+                                        <img id="previewCMPYolo" alt="Preview YOLOv8"
+                                            style="display:block;max-width:100%;max-height:320px;height:auto;width:auto;object-fit:contain;">
+                                        <canvas id="bboxCanvasCMPYolo"></canvas>
+                                    </div>
                                 </div>
-                                <div id="yoloSummaryResult" class="text-left mt-4"></div>
+                                <div id="yoloSummaryResult" class="text-left mt-2"></div>
                             </div>
                             <div>
                                 <p class="type-caption text-apple-mid-gray mb-2 text-left font-semibold">MobileNetv4
                                     <span class="font-normal text-apple-mid-gray">(Klasifikasi)</span></p>
                                 <div
-                                    class="flex justify-center mb-3 border border-apple-light-gray rounded-apple-md overflow-hidden bg-white">
+                                    class="border border-apple-light-gray rounded-apple-md overflow-hidden w-full bg-slate-50 flex items-center justify-center" style="height: 320px;">
                                     <img id="previewCMPMN" alt="Preview MobileNetv4"
-                                        style="display:block;max-width:100%;height:auto;max-height:300px;">
+                                        style="display:block;max-width:100%;max-height:320px;height:auto;width:auto;object-fit:contain;">
                                 </div>
-                                <div id="mnClassifyResult" class="text-left"></div>
+                                <div id="mnClassifyResult" class="text-left mt-2"></div>
                             </div>
                         </div>
 
@@ -1255,7 +1257,7 @@
 
             const best = entries[0];
             let html = `
-                <div class="mt-6">
+                <div class="mt-0">
                     <h3 class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">Semua Kelas</h3>
                     <div class="space-y-2">
             `;
@@ -1303,7 +1305,7 @@
 
         function buildMNResultHTML(data) {
             const best = data.best;
-            let html = `<div class="text-left mt-2">
+            let html = `<div class="text-left mt-0">
                 <h3 class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">Semua Kelas</h3>
                 <div class="space-y-2">`;
             data.details.forEach(d => {
@@ -1311,7 +1313,7 @@
                 const isTop = d.class === best.class;
                 html += `<div class="p-3 bg-white rounded-apple-sm border border-apple-light-gray">
                     <div class="flex justify-between mb-1">
-                        <span class="type-caption ${isTop ? 'font-semibold text-apple-link-blue' : 'text-apple-near-black'}">${d.class.replace(/_/g, ' ')}</span>
+                        <span class="type-caption ${isTop ? 'font-semibold text-apple-link-blue' : 'text-apple-near-black'} capitalize">${d.class.replace(/_/g, ' ')}</span>
                         <span class="type-caption font-semibold text-apple-near-black">${pct}%</span>
                     </div>
                     <div class="h-1.5 rounded-full bg-apple-light-gray overflow-hidden">
