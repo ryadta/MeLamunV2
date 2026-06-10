@@ -365,8 +365,27 @@
             position: relative;
             height: 220px;
             overflow: hidden;
-            background: var(--species-gradient, #f5f5f7);
             border-bottom: 1px solid var(--apple-light-gray);
+        }
+
+        .species-card-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--species-gradient, #f5f5f7);
+            z-index: 0;
+            animation: oceanColorShift 4s ease-in-out infinite;
+        }
+
+        @keyframes oceanColorShift {
+            0% { filter: hue-rotate(0deg) brightness(1) scale(1); }
+            50% { filter: hue-rotate(25deg) brightness(1.15) scale(1.05); }
+            100% { filter: hue-rotate(0deg) brightness(1) scale(1); }
+        }
+
+        .species-card-visual > * {
+            position: relative;
+            z-index: 1;
         }
 
         .species-model {
@@ -1056,7 +1075,7 @@
                 const src = modelPath(species.slug);
                 return `
                     <article class="species-card">
-                        <div class="species-card-visual" style="--species-gradient: ${species.gradient}; background: ${species.gradient};">
+                        <div class="species-card-visual" style="--species-gradient: ${species.gradient};">
                             <model-viewer
                                 class="species-model"
                                 alt="Model 3D ${species.name}"
