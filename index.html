@@ -493,7 +493,7 @@
         }
 
         .mode-tab {
-            color: rgba(255,255,255,0.45);
+            color: var(--apple-mid-gray);
             background: transparent;
             border: none;
             cursor: pointer;
@@ -502,13 +502,13 @@
         }
 
         .mode-tab.active {
-            background: rgba(255,255,255,0.12);
-            color: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            background: #fff;
+            color: var(--apple-near-black);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
         .mode-tab:hover:not(.active) {
-            color: rgba(255,255,255,0.75);
+            color: var(--apple-near-black);
         }
 
         /* ─── Hero ──────────────────────────────────────────────── */
@@ -723,16 +723,16 @@
         </div>
     </div>
 
-    <section id="deteksi" class="bg-[#1d1d1f] py-24 px-5 md:px-10">
+    <section id="deteksi" class="bg-white py-24 px-5 md:px-10">
         <div class="max-w-[960px] mx-auto">
             <div class="text-center mb-12">
-                <p class="text-xs font-semibold tracking-[0.15em] uppercase text-emerald-400 mb-3">Coba Sekarang</p>
-                <h2 class="text-[32px] md:text-[40px] font-bold text-white leading-tight tracking-tight mb-4">Identifikasi Lamun<br>dengan AI</h2>
-                <p class="text-[17px] text-white/50 max-w-[480px] mx-auto leading-relaxed">Pilih mode klasifikasi, unggah foto padang lamun, dan biarkan AI menganalisisnya.</p>
+                <p class="text-xs font-semibold tracking-[0.15em] uppercase text-apple-link-blue mb-3">Coba Sekarang</p>
+                <h2 class="text-[32px] md:text-[40px] font-bold text-apple-near-black leading-tight tracking-tight mb-4">Identifikasi Lamun<br>dengan AI</h2>
+                <p class="text-[17px] text-apple-mid-gray max-w-[480px] mx-auto leading-relaxed">Pilih mode klasifikasi, unggah foto padang lamun, dan biarkan AI menganalisisnya.</p>
             </div>
 
             <div class="flex justify-center mb-10">
-                <div class="inline-flex rounded-full p-1 gap-1" role="tablist" aria-label="Mode Deteksi" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);">
+                <div class="inline-flex rounded-full p-1 gap-1 bg-apple-surface-gray border border-apple-light-gray" role="tablist" aria-label="Mode Deteksi">
                     <button type="button" role="tab" aria-selected="true" aria-controls="panel-yolo" id="tab-yolo" class="mode-tab active px-5 py-2 rounded-full type-body-small font-semibold transition-all">YOLOv8</button>
                     <button type="button" role="tab" aria-selected="false" aria-controls="panel-MobileNetv4" id="tab-MobileNetv4" class="mode-tab px-5 py-2 rounded-full type-body-small font-semibold transition-all">MobileNetv4</button>
                     <button type="button" role="tab" aria-selected="false" aria-controls="panel-compare" id="tab-compare" class="mode-tab px-5 py-2 rounded-full type-body-small font-semibold transition-all">Perbandingan</button>
