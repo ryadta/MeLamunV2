@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeLamun - Deteksi Lamun</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <meta name="theme-color" content="#0071e3">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apple-cta-blue': '#0071e3',
+                        'apple-surface-gray': '#f5f5f7',
+                        'apple-blue': '#2997ff',
+                        'apple-link-blue': '#0066cc',
+                        'apple-mid-gray': '#86868b',
+                        'apple-near-black': '#1d1d1f',
+                        'apple-light-gray': '#e8e8ed',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                        display: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'apple-sm': '5px',
+                        'apple-md': '8px',
+                        'apple-pill': '980px',
+                    },
+                    boxShadow: {
+                        'card-float': '3px 5px 30px 0px rgba(0, 0, 0, 0.22)',
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        :root {
+            --apple-cta-blue: #0071e3;
+            --apple-surface-gray: #f5f5f7;
+            --apple-blue: #2997ff;
+            --apple-link-blue: #0066cc;
+            --apple-mid-gray: #86868b;
+            --apple-near-black: #1d1d1f;
+            --apple-white: #ffffff;
+            --apple-light-gray: #e8e8ed;
+            --pure-black: #000000;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 25px;
+            letter-spacing: -0.374px;
+            color: var(--apple-near-black);
+        }
+
+        .type-hero-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 44px;
+            font-weight: 400;
+            line-height: 44px;
+            letter-spacing: -0.12px;
+        }
+
+        .type-section-heading {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 28px;
+            letter-spacing: 0.216px;
+        }
+
+        .type-subheading {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 25px;
+            letter-spacing: 0.231px;
+        }
+
+        .type-body-small {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 18px;
+            letter-spacing: -0.224px;
+        }
+
+        .type-caption {
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 16px;
+            letter-spacing: -0.12px;
+        }
+
+        .type-nav-label {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 16px;
+            letter-spacing: -0.12px;
+        }
+
+        @media (min-width: 1069px) {
+            .type-hero-title {
+                font-size: 56px;
+                font-weight: 600;
+                line-height: 60px;
+                letter-spacing: -0.28px;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+        }
+
+        .nav-glass {
+            background-color: transparent;
+            border-bottom: 1px solid transparent;
+            transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .nav-glass.scrolled {
+            background-color: rgba(255, 255, 255, 0.82);
+            backdrop-filter: saturate(1.8) blur(24px);
+            -webkit-backdrop-filter: saturate(1.8) blur(24px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            transition: color 0.2s ease;
+        }
+
+        .nav-glass.scrolled .nav-link {
+            color: var(--apple-near-black);
+        }
+
+        .nav-link:hover {
+            color: #fff;
+        }
+
+        .nav-glass.scrolled .nav-link:hover {
+            color: var(--apple-link-blue);
+        }
+
+        .nav-cta {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 980px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: -0.1px;
+            padding: 6px 16px;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-cta:hover {
+            background: rgba(255, 255, 255, 0.30);
+        }
+
+        .nav-glass.scrolled .nav-cta {
+            background: var(--apple-cta-blue);
+            color: #fff;
+            border-color: var(--apple-cta-blue);
+        }
+
+        .nav-glass.scrolled .nav-cta:hover {
+            background: #0077ed;
+            border-color: #0077ed;
+        }
+
+        /* Mobile menu */
+        .nav-mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            top: 52px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 49;
+            padding: 24px 20px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-mobile-menu.open {
+            display: flex;
+        }
+
+        .nav-mobile-link {
+            color: var(--apple-near-black);
+            font-size: 17px;
+            font-weight: 500;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--apple-light-gray);
+            transition: color 0.2s ease;
+        }
+
+        .nav-mobile-link:hover {
+            color: var(--apple-link-blue);
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+            background: none;
+            border: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+        }
+
+        .nav-glass.scrolled .hamburger span {
+            background: var(--apple-near-black);
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .btn-cta {
+            background-color: var(--apple-cta-blue);
+            color: var(--apple-white);
+            border-radius: 980px;
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 25px;
+            letter-spacing: -0.374px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-cta:hover {
+            background-color: #0077ed;
+            transform: matrix(1, 0, 0, 1, 0, -1);
+        }
+
+        .btn-cta:focus-visible {
+            outline: 3px solid var(--apple-near-black);
+            outline-offset: 0;
+        }
+
+        .loader {
+            border-top-color: var(--apple-cta-blue);
+            animation: spinner 1.5s linear infinite;
+        }
+
+        @keyframes spinner {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+
+        .delay-200 {
+            animation-delay: 200ms;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        #preview {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 60vh;
+        }
+
+        #bboxCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .dropzone-active {
+            border-color: var(--apple-cta-blue) !important;
+            background-color: var(--apple-surface-gray) !important;
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(0, 113, 227, 0.1);
+        }
+
+
+
+        .brand-logo {
+            height: 36px;
+            width: auto;
+            display: block;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .brand-logo:hover {
+            opacity: 0.88;
+        }
+
+        @media (min-width: 768px) {
+            .brand-logo {
+                height: 40px;
+            }
+        }
+
+        .species-card {
+            background: #fff;
+            border: 1px solid var(--apple-light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .species-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 3px 10px 40px 0px rgba(0, 0, 0, 0.08);
+        }
+
+        .species-card-visual {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: var(--species-gradient, #f5f5f7);
+            border-bottom: 1px solid var(--apple-light-gray);
+        }
+
+        .species-model {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+            background: transparent;
+        }
+
+        .model-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.92);
+            text-align: center;
+            padding: 16px;
+        }
+
+        .model-fallback svg {
+            opacity: 0.9;
+        }
+
+        .model-hint {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            line-height: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .model-hint.hidden {
+            display: none;
+        }
+
+        .btn-model-expand {
+            margin-top: 12px;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--apple-light-gray);
+            background: var(--apple-surface-gray);
+            color: var(--apple-link-blue);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-model-expand:hover {
+            background: var(--apple-light-gray);
+        }
+
+        .btn-model-expand:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .model-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .model-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .model-modal-panel {
+            width: min(720px, 100%);
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 3px 5px 30px 0px rgba(0, 0, 0, 0.22);
+        }
+
+        .model-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--apple-light-gray);
+        }
+
+        .model-modal-viewer {
+            width: 100%;
+            height: min(60vh, 480px);
+            background: linear-gradient(180deg, #d4ebfa 0%, #f5f5f7 100%);
+        }
+
+        .model-modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            background: var(--apple-surface-gray);
+            color: var(--apple-near-black);
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .species-name {
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .mode-tab {
+            color: rgba(255,255,255,0.45);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mode-tab.active {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+        }
+
+        .mode-tab:hover:not(.active) {
+            color: rgba(255,255,255,0.75);
+        }
+
+        /* ─── Hero ──────────────────────────────────────────────── */
+        .hero-section { height: 100svh; min-height: 600px; }
+
+        .hero-overlay {
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.18) 0%,
+                rgba(0,0,0,0.10) 35%,
+                rgba(0,0,0,0.55) 75%,
+                rgba(0,0,0,0.80) 100%
+            );
+        }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.22);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 980px; padding: 5px 14px;
+            font-size: 12px; font-weight: 500;
+            color: rgba(255,255,255,0.92); letter-spacing: 0.02em;
+        }
+
+        .hero-badge-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #34c759; box-shadow: 0 0 6px #34c759;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.8); }
+        }
+
+        .hero-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(44px, 8vw, 80px); font-weight: 700;
+            line-height: 1.05; letter-spacing: -0.03em;
+            color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,0.25);
+        }
+
+        .hero-sub {
+            font-size: clamp(15px, 2vw, 18px); line-height: 1.6;
+            color: rgba(255,255,255,0.80); max-width: 520px; margin: 0 auto;
+        }
+
+        .hero-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .hero-stat-num { font-size: 22px; font-weight: 700; color: #fff; line-height: 1; }
+        .hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; }
+        .hero-stat-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.2); }
+
+        .hero-btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #fff; color: #0071e3; border-radius: 980px;
+            font-size: 15px; font-weight: 600; padding: 13px 28px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+
+        .hero-btn-secondary {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.92);
+            border: 1px solid rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 980px; font-size: 15px; font-weight: 500; padding: 13px 24px;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .hero-btn-secondary:hover { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
+
+        .scroll-indicator {
+            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            color: rgba(255,255,255,0.45); font-size: 10px;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            animation: fadeInUp 1.2s 1s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0;
+        }
+        .scroll-indicator-wheel {
+            width: 22px; height: 34px;
+            border: 1.5px solid rgba(255,255,255,0.35); border-radius: 11px;
+            display: flex; justify-content: center; padding-top: 5px;
+        }
+        .scroll-indicator-dot {
+            width: 3px; height: 6px;
+            background: rgba(255,255,255,0.6); border-radius: 2px;
+            animation: scroll-dot 1.8s ease-in-out infinite;
+        }
+        @keyframes scroll-dot {
+            0% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 0; transform: translateY(0); }
+        }
+
+        #comparePanels .image-container {
+            display: block;
+            max-width: 100%;
+            position: relative;
+        }
+
+        #comparePanels canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 antialiased">
+
+    <nav id="mainNav" class="nav-glass sticky top-0 z-50">
+        <div class="max-w-[1068px] mx-auto px-5 md:px-10 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="shrink-0" aria-label="MeLamun - Beranda">
+                <img id="navLogo" src="assets/logo-nav.png?v=3" alt="MeLamun" class="brand-logo" width="264"
+                    height="80">
+            </a>
+
+            <!-- Desktop links -->
+            <div class="hidden md:flex items-center gap-7">
+                <a href="#beranda" class="nav-link type-body-small">Beranda</a>
+                <a href="#spesies" class="nav-link type-body-small">Spesies</a>
+                <a href="#deteksi" class="nav-link type-body-small">Klasifikasi</a>
+
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button id="hamburgerBtn" class="hamburger md:hidden" aria-label="Buka menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="nav-mobile-menu" role="dialog" aria-label="Menu navigasi">
+        <a href="#beranda" class="nav-mobile-link" onclick="closeMobileMenu()">Beranda</a>
+        <a href="#spesies" class="nav-mobile-link" onclick="closeMobileMenu()">Spesies</a>
+        <a href="#deteksi" class="nav-mobile-link" onclick="closeMobileMenu()">Klasifikasi</a>
+
+    </div>
+
+    <section id="beranda" class="hero-section relative overflow-hidden -mt-[52px]">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none">
+            <source src="assets/hero-seagrass.webm" type="video/webm">
+        </video>
+        <div class="hero-overlay absolute inset-0 z-[1] pointer-events-none"></div>
+
+        <div class="relative z-10 w-full h-full flex flex-col items-center justify-end pb-20 px-5 md:px-10 text-center">
+            <div class="fade-in-up">
+                <div class="flex justify-center mb-6">
+                    <span class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        AI-Powered &middot; YOLOv8 &amp; MobileNetv4
+                    </span>
+                </div>
+                <h1 class="hero-title mb-5">Klasifikasi<br>Jenis Lamun</h1>
+                <p class="hero-sub mb-10 fade-in-up delay-100" style="opacity:0;">
+                    Platform AI untuk mengidentifikasi dan mengklasifikasikan spesies lamun pada foto bawah air secara otomatis.
+                </p>
+                <div class="flex flex-wrap justify-center gap-3 mb-14 fade-in-up delay-200" style="opacity:0;">
+                    <a href="#deteksi" class="hero-btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="#0071e3" stroke-width="1.5"/><path d="M6 5.5L10.5 8 6 10.5V5.5Z" fill="#0071e3"/></svg>
+                        Mulai Klasifikasi
+                    </a>
+                    <a href="#spesies" class="hero-btn-secondary">
+                        Lihat Spesies
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 2.5L7 11.5M7 11.5L3.5 8M7 11.5L10.5 8" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
+                <div class="flex items-center justify-center gap-8 fade-in-up" style="animation-delay:350ms;opacity:0;">
+                    <div class="hero-stat"><span class="hero-stat-num">6</span><span class="hero-stat-label">Spesies</span></div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat"><span class="hero-stat-num">2</span><span class="hero-stat-label">Model AI</span></div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat"><span class="hero-stat-num">3D</span><span class="hero-stat-label">Model Interaktif</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator" aria-hidden="true">
+            <div class="scroll-indicator-wheel"><div class="scroll-indicator-dot"></div></div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <section id="spesies" class="bg-white py-24 px-5 md:px-10">
+        <div class="max-w-[1068px] mx-auto">
+            <div class="text-center mb-14">
+                <p class="text-xs font-semibold tracking-[0.15em] uppercase text-emerald-600 mb-3">Database Spesies</p>
+                <h2 class="text-[32px] md:text-[40px] font-bold text-[#1d1d1f] leading-tight tracking-tight mb-4">6 Jenis Lamun<br>yang Dapat Dikenali</h2>
+                <p class="text-[17px] text-[#86868b] max-w-[480px] mx-auto leading-relaxed">Setiap spesies dapat dilihat dalam model 3D interaktif dan diidentifikasi menggunakan YOLOv8 maupun MobileNetv4.</p>
+            </div>
+            <div id="speciesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+    </section>
+
+    <div id="modelModal" class="model-modal" role="dialog" aria-modal="true" aria-hidden="true"
+        aria-labelledby="modelModalTitle">
+        <div class="model-modal-panel">
+            <div class="model-modal-header">
+                <h3 id="modelModalTitle" class="species-name type-body-small text-apple-near-black"></h3>
+                <button type="button" id="modelModalClose" class="model-modal-close" aria-label="Tutup">&times;</button>
+            </div>
+            <model-viewer id="modelModalViewer" class="model-modal-viewer" camera-controls auto-rotate
+                shadow-intensity="0.9" exposure="1" interaction-prompt="auto" touch-action="pan-y"></model-viewer>
+        </div>
+    </div>
+
+    <section id="deteksi" class="bg-[#1d1d1f] py-24 px-5 md:px-10">
+        <div class="max-w-[960px] mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs font-semibold tracking-[0.15em] uppercase text-emerald-400 mb-3">Coba Sekarang</p>
+                <h2 class="text-[32px] md:text-[40px] font-bold text-white leading-tight tracking-tight mb-4">Identifikasi Lamun<br>dengan AI</h2>
+                <p class="text-[17px] text-white/50 max-w-[480px] mx-auto leading-relaxed">Pilih mode klasifikasi, unggah foto padang lamun, dan biarkan AI menganalisisnya.</p>
+            </div>
+
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex rounded-full p-1 gap-1" role="tablist" aria-label="Mode Deteksi" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);">
+                    <button type="button" role="tab" aria-selected="true" aria-controls="panel-yolo" id="tab-yolo" class="mode-tab active px-5 py-2 rounded-full type-body-small font-semibold transition-all">YOLOv8</button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="panel-MobileNetv4" id="tab-MobileNetv4" class="mode-tab px-5 py-2 rounded-full type-body-small font-semibold transition-all">MobileNetv4</button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="panel-compare" id="tab-compare" class="mode-tab px-5 py-2 rounded-full type-body-small font-semibold transition-all">Perbandingan</button>
+                </div>
+            </div>
+
+            <div id="actionModal"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="bg-white p-6 rounded-2xl w-full max-w-sm mx-4 flex flex-col gap-4 shadow-2xl transform scale-95 transition-transform duration-300"
+                    id="actionModalBody">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-slate-800 text-lg">Pilih Sumber Gambar</h3>
+                        <button type="button" onclick="closeActionModal()"
+                            class="text-slate-500 hover:text-slate-800 p-1">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" onclick="chooseGallery()"
+                        class="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-sky-300 hover:bg-sky-50 transition-colors text-left group">
+                        <div
+                            class="w-12 h-12 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-slate-800">Pilih dari Galeri</div>
+                            <div class="text-sm text-slate-500">Unggah file dari perangkat</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="chooseCamera()"
+                        class="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 transition-colors text-left group">
+                        <div
+                            class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-slate-800">Buka Kamera</div>
+                            <div class="text-sm text-slate-500">Ambil foto langsung</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="cameraModal"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="bg-black p-4 rounded-2xl w-full max-w-lg mx-4 flex flex-col gap-4 shadow-2xl relative">
+                    <div class="flex justify-between items-center text-white mb-2">
+                        <h3 class="font-semibold text-lg">Ambil Foto</h3>
+                        <button type="button" onclick="closeCameraModal()" class="text-slate-300 hover:text-white p-1">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div
+                        class="relative w-full aspect-[4/3] bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center">
+                        <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+                        <div id="cameraLoading"
+                            class="absolute inset-0 flex items-center justify-center text-white bg-slate-800">Membuka
+                            kamera...</div>
+                    </div>
+                    <button type="button" id="btnCapture"
+                        class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold transition-colors">Ambil
+                        Foto</button>
+                </div>
+            </div>
+
+            <div id="panel-yolo" role="tabpanel" aria-labelledby="tab-yolo" class="mode-panel">
+                <div
+                    class="bg-apple-surface-gray p-8 md:p-10 rounded-apple-md shadow-card-float border border-apple-light-gray text-center transition-all fade-in-up">
+                    <div id="dropZone" onclick="openActionModal('yolo')"
+                        class="mb-6 relative border-2 border-dashed border-apple-light-gray bg-white rounded-apple-md p-10 hover:border-emerald-500 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center">
+                        <input type="file" id="imageInput" accept="image/*" class="hidden">
+                        <svg class="w-10 h-10 text-apple-mid-gray mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                            </path>
+                        </svg>
+                        <h3 class="type-body-small font-semibold text-apple-near-black mb-1"><span
+                                class="text-apple-link-blue">Klik untuk memilih sumber</span> atau Seret dan Lepas file
+                        </h3>
+                        <p class="type-caption text-apple-mid-gray">Format yang didukung: JPG, JPEG, PNG</p>
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <div id="imageContainer"
+                            class="image-container hidden border border-apple-light-gray rounded-apple-md overflow-hidden">
+                            <img id="preview" alt="Preview Gambar">
+                            <canvas id="bboxCanvas"></canvas>
+                        </div>
+                    </div>
+                    <div id="loadingState" class="hidden flex flex-col items-center justify-center my-6">
+                        <div
+                            class="loader ease-linear rounded-full border-4 border-t-4 border-apple-light-gray h-10 w-10 mb-3">
+                        </div>
+                        <p class="type-body-small text-apple-mid-gray">YOLOv8 sedang menganalisis gambar...</p>
+                    </div>
+                    <div id="bestResult"
+                        class="hidden p-5 rounded-apple-md mb-4 bg-white border border-apple-light-gray">
+                        <p class="type-caption text-apple-mid-gray mb-1">Status Deteksi · YOLOv8</p>
+                        <h3 id="bestClassText" class="type-section-heading text-apple-near-black"></h3>
+                    </div>
+                    <div id="allResults" class="hidden text-left mt-6"></div>
+                </div>
+            </div>
+
+            <div id="panel-MobileNetv4" role="tabpanel" aria-labelledby="tab-MobileNetv4" class="mode-panel hidden">
+                <div
+                    class="bg-apple-surface-gray p-8 md:p-10 rounded-apple-md shadow-card-float border border-apple-light-gray text-center transition-all fade-in-up">
+                    <div id="dropZoneMN" onclick="openActionModal('MobileNetv4')"
+                        class="mb-6 relative border-2 border-dashed border-apple-light-gray bg-white rounded-apple-md p-10 hover:border-emerald-500 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center">
+                        <input type="file" id="imageInputMN" accept="image/*" class="hidden">
+                        <svg class="w-10 h-10 text-apple-mid-gray mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                            </path>
+                        </svg>
+                        <h3 class="type-body-small font-semibold text-apple-near-black mb-1"><span
+                                class="text-apple-link-blue">Klik untuk memilih sumber</span> atau Seret dan Lepas file
+                        </h3>
+                        <p class="type-caption text-apple-mid-gray">Format yang didukung: JPG, JPEG, PNG</p>
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <div id="imageContainerMN"
+                            class="image-container hidden border border-apple-light-gray rounded-apple-md overflow-hidden">
+                            <img id="previewMN" alt="Preview Gambar MobileNetv4">
+                        </div>
+                    </div>
+                    <div id="loadingStateMN" class="hidden flex flex-col items-center justify-center my-6">
+                        <div
+                            class="loader ease-linear rounded-full border-4 border-t-4 border-apple-light-gray h-10 w-10 mb-3">
+                        </div>
+                        <p class="type-body-small text-apple-mid-gray">MobileNetv4V4 sedang menganalisis gambar...</p>
+                    </div>
+                    <div id="allResultsMN" class="hidden text-left mt-2"></div>
+                </div>
+            </div>
+
+            <div id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" class="mode-panel hidden">
+                <div
+                    class="bg-apple-surface-gray p-8 md:p-10 rounded-apple-md shadow-card-float border border-apple-light-gray text-center transition-all fade-in-up">
+                    <div id="dropZoneCMP" onclick="openActionModal('compare')"
+                        class="mb-6 relative border-2 border-dashed border-apple-light-gray bg-white rounded-apple-md p-10 hover:border-emerald-500 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center">
+                        <input type="file" id="imageInputCMP" accept="image/*" class="hidden">
+                        <svg class="w-10 h-10 text-apple-mid-gray mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                            </path>
+                        </svg>
+                        <h3 class="type-body-small font-semibold text-apple-near-black mb-1"><span
+                                class="text-apple-link-blue">Klik untuk memilih sumber</span> atau Seret dan Lepas file
+                        </h3>
+                        <p class="type-caption text-apple-mid-gray">Satu gambar akan diproses oleh kedua model secara
+                            bersamaan</p>
+                    </div>
+
+                    <div id="loadingStateCMP" class="hidden flex flex-col items-center justify-center my-6">
+                        <div
+                            class="loader ease-linear rounded-full border-4 border-t-4 border-apple-light-gray h-10 w-10 mb-3">
+                        </div>
+                        <p class="type-body-small text-apple-mid-gray">Kedua model sedang menganalisis...</p>
+                    </div>
+
+                    <div id="comparePanels" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                            <div>
+                                <p class="type-caption text-apple-mid-gray mb-2 text-left font-semibold">YOLOv8</p>
+                                <div
+                                    class="image-container border border-apple-light-gray rounded-apple-md overflow-hidden w-full">
+                                    <img id="previewCMPYolo" alt="Preview YOLOv8"
+                                        style="display:block;max-width:100%;height:auto;">
+                                    <canvas id="bboxCanvasCMPYolo"></canvas>
+                                </div>
+                                <div id="yoloSummaryResult" class="text-left mt-4"></div>
+                            </div>
+                            <div>
+                                <p class="type-caption text-apple-mid-gray mb-2 text-left font-semibold">MobileNetv4
+                                    <span class="font-normal text-apple-mid-gray">(Klasifikasi)</span></p>
+                                <div
+                                    class="flex justify-center mb-3 border border-apple-light-gray rounded-apple-md overflow-hidden bg-white">
+                                    <img id="previewCMPMN" alt="Preview MobileNetv4"
+                                        style="display:block;max-width:100%;height:auto;max-height:300px;">
+                                </div>
+                                <div id="mnClassifyResult" class="text-left"></div>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <h3
+                                class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">
+                                Perbandingan Metrik</h3>
+                            <div class="overflow-x-auto rounded-apple-md border border-apple-light-gray">
+                                <table class="w-full text-left" style="border-collapse:collapse;">
+                                    <thead>
+                                        <tr class="bg-apple-surface-gray border-b border-apple-light-gray">
+                                            <th class="type-caption font-semibold text-apple-mid-gray px-4 py-3">Metrik
+                                            </th>
+                                            <th class="type-caption font-semibold text-apple-near-black px-4 py-3">
+                                                YOLOv8</th>
+                                            <th class="type-caption font-semibold text-apple-near-black px-4 py-3">
+                                                MobileNetv4</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="compareTableBody" class="divide-y divide-apple-light-gray"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#1d1d1f] py-12 px-5 md:px-10" style="border-top:1px solid rgba(255,255,255,0.08);">
+        <div class="max-w-[1068px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <a href="#" aria-label="MeLamun - Beranda" class="shrink-0">
+                <img src="assets/logo-nav.png?v=3" alt="MeLamun" class="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity" style="filter:invert(1) hue-rotate(180deg) brightness(1.2);" width="211" height="64">
+            </a>
+            <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                <a href="#beranda" class="text-[13px] text-white/40 hover:text-white/80 transition-colors">Beranda</a>
+                <a href="#spesies" class="text-[13px] text-white/40 hover:text-white/80 transition-colors">Spesies</a>
+                <a href="#deteksi" class="text-[13px] text-white/40 hover:text-white/80 transition-colors">Klasifikasi</a>
+            </div>
+            <p class="text-[12px] text-white/25">&copy; 2026 MeLamun Project</p>
+        </div>
+    </footer>
+
+    <script>
+        const SPESIES_LAMUN = [
+            {
+                slug: 'cymodocea_rotundata',
+                name: 'Cymodocea rotundata',
+                description: 'Daun bulat dengan ujung tumpul, umum di perairan dangkal tropis.',
+                gradient: 'radial-gradient(circle at 50% 50%, #f0f7f4 0%, #e1ebe6 100%)',
+            },
+            {
+                slug: 'cymodocea_serrulata',
+                name: 'Cymodocea serrulata',
+                description: 'Daun dengan tepi bergerigi halus, menyebar di zona intertidal.',
+                gradient: 'radial-gradient(circle at 50% 50%, #f2f8f5 0%, #e4ede8 100%)',
+            },
+            {
+                slug: 'enhalus_acoroides',
+                name: 'Enhalus acoroides',
+                description: 'Lamun berukuran besar dengan daun panjang berbentuk pita.',
+                gradient: 'radial-gradient(circle at 50% 50%, #eef5f2 0%, #dfeae4 100%)',
+            },
+            {
+                slug: 'halodule_uninervis',
+                name: 'Halodule uninervis',
+                description: 'Daun sempit seperti jarum dengan satu tulang daun menonjol.',
+                gradient: 'radial-gradient(circle at 50% 50%, #f4f9f6 0%, #e6efe9 100%)',
+            },
+            {
+                slug: 'halophila_ovalis',
+                name: 'Halophila ovalis',
+                description: 'Daun kecil berbentuk oval, sering ditemukan di perairan sangat dangkal.',
+                gradient: 'radial-gradient(circle at 50% 50%, #f1f7f5 0%, #e3ede8 100%)',
+            },
+            {
+                slug: 'thalassia_hemprichii',
+                name: 'Thalassia hemprichii',
+                description: 'Daun lebar berbentuk pita membentuk padang lamun yang rimbun.',
+                gradient: 'radial-gradient(circle at 50% 50%, #eff6f3 0%, #e0ebe5 100%)',
+            },
+        ];
+
+        const MODEL_BASE_PATH = 'assets/models/';
+
+        function modelPath(slug) {
+            return `${MODEL_BASE_PATH}${slug}.glb`;
+        }
+
+        function fallbackPosterHTML() {
+            return `
+
+            `;
+        }
+
+        function setupModelViewer(viewer, hint, expandBtn, species) {
+            const src = modelPath(species.slug);
+
+            viewer.addEventListener('load', () => {
+                hint.textContent = 'Geser untuk memutar · Scroll untuk zoom';
+                hint.classList.remove('hidden');
+                expandBtn.disabled = false;
+            });
+
+            viewer.addEventListener('error', () => {
+                viewer.removeAttribute('src');
+                hint.textContent = `Letakkan ${species.slug}.glb di assets/models/`;
+                hint.classList.remove('hidden');
+                expandBtn.disabled = true;
+            });
+
+            expandBtn.addEventListener('click', () => openModelModal(species, src, expandBtn.disabled));
+
+            viewer.setAttribute('src', src);
+        }
+
+        function renderSpeciesCards() {
+            const grid = document.getElementById('speciesGrid');
+
+            grid.innerHTML = SPESIES_LAMUN.map((species, index) => {
+                const src = modelPath(species.slug);
+                return `
+                    <article class="species-card">
+                        <div class="species-card-visual" style="--species-gradient: ${species.gradient}; background: ${species.gradient};">
+                            <model-viewer
+                                class="species-model"
+                                alt="Model 3D ${species.name}"
+                                camera-controls
+                                auto-rotate
+                                shadow-intensity="0.8"
+                                exposure="1"
+                                interaction-prompt="auto"
+                                touch-action="pan-y"
+                                loading="lazy"
+                                data-model-src="${src}"
+                            >${fallbackPosterHTML()}</model-viewer>
+                            <p class="model-hint type-caption">Memuat model 3D...</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="type-caption text-apple-mid-gray mb-1">Spesies ${String(index + 1).padStart(2, '0')}</p>
+                            <h3 class="species-name type-body-small text-apple-near-black mb-2">${species.name}</h3>
+                            <p class="type-caption text-apple-mid-gray mb-0">${species.description}</p>
+                            <button type="button" class="btn-model-expand" disabled>Lihat Model 3D</button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            grid.querySelectorAll('.species-card').forEach((card, index) => {
+                const viewer = card.querySelector('model-viewer');
+                const hint = card.querySelector('.model-hint');
+                const expandBtn = card.querySelector('.btn-model-expand');
+                setupModelViewer(viewer, hint, expandBtn, SPESIES_LAMUN[index]);
+            });
+        }
+
+        const modelModal = document.getElementById('modelModal');
+        const modelModalViewer = document.getElementById('modelModalViewer');
+        const modelModalTitle = document.getElementById('modelModalTitle');
+        const modelModalClose = document.getElementById('modelModalClose');
+
+        function openModelModal(species, src, disabled) {
+            if (disabled) return;
+
+            modelModalTitle.textContent = species.name;
+            modelModalViewer.setAttribute('src', src);
+            modelModal.classList.add('open');
+            modelModal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModelModal() {
+            modelModal.classList.remove('open');
+            modelModal.setAttribute('aria-hidden', 'true');
+            modelModalViewer.removeAttribute('src');
+            document.body.style.overflow = '';
+        }
+
+        modelModalClose.addEventListener('click', closeModelModal);
+        modelModal.addEventListener('click', (event) => {
+            if (event.target === modelModal) closeModelModal();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeModelModal();
+        });
+
+        renderSpeciesCards();
+
+        // ─── Navbar scroll-aware ───────────────────────────────────────
+        const mainNav = document.getElementById('mainNav');
+        const navLogo = document.getElementById('navLogo');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        function updateNav() {
+            const scrolled = window.scrollY > 30;
+            mainNav.classList.toggle('scrolled', scrolled);
+            if (scrolled) {
+                navLogo.style.filter = '';
+                navLogo.style.mixBlendMode = 'multiply';
+            } else {
+                navLogo.style.filter = 'invert(1) hue-rotate(180deg) brightness(1.2)';
+                navLogo.style.mixBlendMode = '';
+            }
+        }
+        updateNav();
+        window.addEventListener('scroll', updateNav, { passive: true });
+
+        // Hamburger toggle
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            hamburgerBtn.classList.remove('open');
+            hamburgerBtn.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        hamburgerBtn.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open', isOpen);
+            hamburgerBtn.setAttribute('aria-expanded', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMobileMenu();
+        });
+
+        // ─── Parallax Effect ──────────────────────────────────────────
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.scrollY;
+            const heroContent = document.querySelector('#beranda .z-10');
+
+            if (scrollPos <= window.innerHeight) {
+                if (heroContent) {
+                    heroContent.style.transform = `translateY(${scrollPos * 0.25}px)`;
+                    heroContent.style.opacity = Math.max(1 - (scrollPos / 600), 0);
+                }
+            }
+        });
+
+
+        // ─── Constants ────────────────────────────────────────────────
+        const API_YOLO = 'https://toy22-lamun-api-yolov8.hf.space/api/deteksi';
+        const API_MobileNetv4 = 'https://toy22-lamun-api.hf.space/predict';
+        const COLOR_YOLO = '#0071e3';
+        const COLOR_MN = '#34c759';
+
+        // ─── Tab switching ────────────────────────────────────────────
+        document.querySelectorAll('.mode-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.mode-tab').forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+                document.querySelectorAll('.mode-panel').forEach(p => p.classList.add('hidden'));
+                tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+                document.getElementById(tab.getAttribute('aria-controls')).classList.remove('hidden');
+            });
+        });
+
+        // ─── Shared helpers ───────────────────────────────────────────
+        function drawBoxes(canvas, detections, color) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            detections.forEach(box => {
+                const [x1, y1, x2, y2] = box.kordinat;
+                const pct = (box.akurasi * 100).toFixed(1);
+                ctx.beginPath(); ctx.lineWidth = 3; ctx.strokeStyle = color;
+                ctx.rect(x1, y1, x2 - x1, y2 - y1); ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fillRect(x1, y1 - 25, 200, 25);
+                ctx.fillStyle = 'white';
+                ctx.font = '14px -apple-system, BlinkMacSystemFont, SF Pro Text, Helvetica Neue, Arial, sans-serif';
+                ctx.fillText(box.label + ' ' + pct + '%', x1 + 4, y1 - 7);
+            });
+        }
+
+        function buildDetailHTML(detections) {
+            let html = '<h3 class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">Rincian Spesies Terdeteksi</h3><div class="space-y-3">';
+            if (!detections.length) {
+                html += '<p class="type-body-small text-apple-mid-gray">Tidak ada lamun yang terdeteksi.</p>';
+            }
+            detections.forEach(box => {
+                const [x1, y1, x2, y2] = box.kordinat;
+                const pct = (box.akurasi * 100).toFixed(1);
+                html += '<div class="flex items-center justify-between p-4 bg-white rounded-apple-sm border border-apple-light-gray"><div><span class="type-body-small font-semibold text-apple-link-blue">' + box.label + '</span><p class="type-caption text-apple-mid-gray">Koordinat: [' + x1.toFixed(0) + ', ' + y1.toFixed(0) + ', ' + x2.toFixed(0) + ', ' + y2.toFixed(0) + ']</p></div><div class="text-right"><span class="type-body-small font-semibold text-apple-near-black">' + pct + '%</span><p class="type-caption text-apple-mid-gray">Akurasi</p></div></div>';
+            });
+            return html + '</div>';
+        }
+
+        // Semua kelas yang dikenali YOLOv8
+        const YOLO_CLASSES = [
+            'cymodocea rotundata',
+            'cymodocea serrulata',
+            'enhalus acoroides',
+            'halodule uninervis',
+            'halophila ovalis',
+            'thalassia hemprichii',
+        ];
+
+        function buildYoloSummaryHTML(detections) {
+            // Hitung total confidence per kelas dari semua bounding box
+            const scoreMap = {};
+            YOLO_CLASSES.forEach(c => scoreMap[c] = 0);
+
+            detections.forEach(box => {
+                const label = (box.label || '').toLowerCase().trim();
+                if (scoreMap.hasOwnProperty(label)) {
+                    scoreMap[label] += (box.akurasi * 100);
+                } else {
+                    // label tidak dikenal, tetap tampilkan
+                    scoreMap[label] = (scoreMap[label] || 0) + (box.akurasi * 100);
+                }
+            });
+
+            // Normalisasi: total semua skor jadi 100%
+            const total = Object.values(scoreMap).reduce((a, b) => a + b, 0);
+            const entries = Object.entries(scoreMap)
+                .map(([cls, raw]) => ({ cls, pct: total > 0 ? (raw / total) * 100 : 0 }))
+                .sort((a, b) => b.pct - a.pct);
+
+            const best = entries[0];
+            let html = `
+                <div class="mt-6">
+                    <h3 class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">Semua Kelas</h3>
+                    <div class="space-y-2">
+            `;
+
+            entries.forEach(({ cls, pct }) => {
+                const isTop = cls === best.cls && pct > 0;
+                const barColor = isTop ? COLOR_YOLO : '#86868b';
+                const labelColor = isTop ? 'text-apple-link-blue font-semibold' : 'text-apple-near-black';
+                html += `
+                    <div class="p-3 bg-white rounded-apple-sm border border-apple-light-gray">
+                        <div class="flex justify-between mb-1">
+                            <span class="type-caption ${labelColor} capitalize">${cls}</span>
+                            <span class="type-caption font-semibold text-apple-near-black">${pct.toFixed(1)}%</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-apple-light-gray overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500"
+                                style="width:${pct.toFixed(1)}%;background:${barColor};"></div>
+                        </div>
+                    </div>`;
+            });
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        async function callAPI(url, file) {
+            const t0 = performance.now();
+            const fd = new FormData();
+            fd.append('gambar', file);
+            const res = await fetch(url, { method: 'POST', body: fd });
+            if (!res.ok) throw new Error('Server response tidak OK');
+            const data = await res.json();
+            return { data, elapsed: performance.now() - t0 };
+        }
+
+        async function callAPIMobileNetv4(file) {
+            const t0 = performance.now();
+            const fd = new FormData();
+            fd.append('file', file);
+            const res = await fetch(API_MobileNetv4, { method: 'POST', body: fd });
+            if (!res.ok) throw new Error('Server response tidak OK');
+            const data = await res.json();
+            return { data, elapsed: performance.now() - t0 };
+        }
+
+        function buildMNResultHTML(data) {
+            const best = data.best;
+            let html = `<div class="text-left mt-2">
+                <h3 class="type-body-small font-semibold text-apple-near-black mb-4 border-b border-apple-light-gray pb-3">Semua Kelas</h3>
+                <div class="space-y-2">`;
+            data.details.forEach(d => {
+                const pct = d.confidence.toFixed(1);
+                const isTop = d.class === best.class;
+                html += `<div class="p-3 bg-white rounded-apple-sm border border-apple-light-gray">
+                    <div class="flex justify-between mb-1">
+                        <span class="type-caption ${isTop ? 'font-semibold text-apple-link-blue' : 'text-apple-near-black'}">${d.class.replace(/_/g, ' ')}</span>
+                        <span class="type-caption font-semibold text-apple-near-black">${pct}%</span>
+                    </div>
+                    <div class="h-1.5 rounded-full bg-apple-light-gray overflow-hidden">
+                        <div class="h-full rounded-full transition-all" style="width:${pct}%;background:${isTop ? '#34c759' : '#86868b'};"></div>
+                    </div>
+                </div>`;
+            });
+            html += `</div></div>`;
+            return html;
+        }
+
+        function setupDropzone(dropId, inputId, onFile) {
+            const dz = document.getElementById(dropId);
+            const inp = document.getElementById(inputId);
+            inp.addEventListener('change', e => { if (e.target.files[0]) { closeActionModal(); onFile(e.target.files[0]); } });
+            dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dropzone-active'); });
+            dz.addEventListener('dragleave', e => { e.preventDefault(); dz.classList.remove('dropzone-active'); });
+            dz.addEventListener('drop', e => {
+                e.preventDefault(); dz.classList.remove('dropzone-active');
+                const f = e.dataTransfer.files[0];
+                if (f) { const dt = new DataTransfer(); dt.items.add(f); inp.files = dt.files; onFile(f); }
+            });
+        }
+
+        // ─── Action Modal Logic ───────────────────────────────────────
+        let actionTarget = null;
+        const actionModal = document.getElementById('actionModal');
+
+        function openActionModal(target) {
+            actionTarget = target;
+            actionModal.classList.remove('opacity-0', 'pointer-events-none');
+            actionModal.querySelector('#actionModalBody').classList.remove('scale-95');
+        }
+
+        function closeActionModal() {
+            actionModal.classList.add('opacity-0', 'pointer-events-none');
+            actionModal.querySelector('#actionModalBody').classList.add('scale-95');
+        }
+
+        function chooseGallery() {
+            closeActionModal();
+            if (actionTarget === 'yolo') {
+                document.getElementById('imageInput').click();
+            } else if (actionTarget === 'MobileNetv4') {
+                document.getElementById('imageInputMN').click();
+            } else if (actionTarget === 'compare') {
+                document.getElementById('imageInputCMP').click();
+            }
+        }
+
+        function chooseCamera() {
+            closeActionModal();
+            openCameraModal(actionTarget);
+        }
+
+        // ─── Camera WebRTC Logic ──────────────────────────────────────
+        let activeTarget = null;
+        let cameraStream = null;
+        const cameraModal = document.getElementById('cameraModal');
+        const cameraVideo = document.getElementById('cameraVideo');
+        const cameraLoading = document.getElementById('cameraLoading');
+
+        async function openCameraModal(target) {
+            activeTarget = target;
+            cameraModal.classList.remove('opacity-0', 'pointer-events-none');
+            cameraLoading.style.display = 'block';
+
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Kamera tidak didukung (harus dijalankan via localhost/HTTPS, bukan file://).');
+                }
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                    audio: false
+                });
+                cameraVideo.srcObject = cameraStream;
+                cameraVideo.onloadedmetadata = () => {
+                    cameraLoading.style.display = 'none';
+                };
+            } catch (err) {
+                cameraLoading.innerText = err.message || 'Gagal mengakses kamera. Periksa izin browser.';
+                console.error('Camera error:', err);
+                alert('Error Kamera: ' + (err.message || 'Izin ditolak atau tidak didukung. Pastikan website dijalankan melalui local server (localhost) atau HTTPS.'));
+            }
+        }
+
+        function closeCameraModal() {
+            cameraModal.classList.add('opacity-0', 'pointer-events-none');
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            cameraVideo.srcObject = null;
+        }
+
+        document.getElementById('btnCapture').addEventListener('click', () => {
+            if (!cameraStream) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraVideo.videoWidth;
+            canvas.height = cameraVideo.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                if (!blob) return;
+                const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" });
+
+                closeCameraModal();
+                if (activeTarget === 'yolo') {
+                    handleYoloFile(file);
+                } else if (activeTarget === 'MobileNetv4') {
+                    handleMNFile(file);
+                } else if (activeTarget === 'compare') {
+                    handleCMPFile(file);
+                }
+            }, 'image/jpeg', 0.9);
+        });
+
+        // ─── Handlers ─────────────────────────────────────────────────
+        const handleYoloFile = async (file) => {
+            if (!file.type.startsWith('image/')) return;
+            const preview = document.getElementById('preview');
+            const canvas = document.getElementById('bboxCanvas');
+            const loading = document.getElementById('loadingState');
+            const statBox = document.getElementById('bestResult');
+            const statTxt = document.getElementById('bestClassText');
+            const detail = document.getElementById('allResults');
+
+            preview.src = URL.createObjectURL(file);
+            await new Promise(r => { preview.onload = r; });
+            canvas.width = preview.naturalWidth; canvas.height = preview.naturalHeight;
+            document.getElementById('imageContainer').classList.remove('hidden');
+            statBox.classList.add('hidden'); detail.classList.add('hidden');
+            loading.classList.remove('hidden');
+            statTxt.className = 'type-section-heading text-apple-near-black';
+
+            try {
+                const { data } = await callAPI(API_YOLO, file);
+                loading.classList.add('hidden');
+                if (data.status === 'sukses') {
+                    statTxt.innerText = 'Ditemukan ' + data.jumlah_terdeteksi + ' objek Lamun';
+                    statBox.classList.remove('hidden');
+                    drawBoxes(canvas, data.data, COLOR_YOLO);
+                    detail.innerHTML = buildDetailHTML(data.data) + buildYoloSummaryHTML(data.data);
+                    detail.classList.remove('hidden');
+                }
+            } catch (err) {
+                loading.classList.add('hidden');
+                statTxt.innerText = 'Gagal menghubungi server API.';
+                statTxt.className = 'type-section-heading text-red-600';
+                statBox.classList.remove('hidden');
+                console.error(err);
+            }
+        };
+
+        const handleMNFile = async (file) => {
+            if (!file || !file.type.startsWith('image/')) return;
+            const preview = document.getElementById('previewMN');
+            const loading = document.getElementById('loadingStateMN');
+            const detail = document.getElementById('allResultsMN');
+
+            preview.src = URL.createObjectURL(file);
+            document.getElementById('imageContainerMN').classList.remove('hidden');
+            detail.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            try {
+                const { data } = await callAPIMobileNetv4(file);
+                loading.classList.add('hidden');
+                detail.innerHTML = buildMNResultHTML(data);
+                detail.classList.remove('hidden');
+            } catch (err) {
+                loading.classList.add('hidden');
+                detail.innerHTML = `<p class="type-body-small text-red-600">Gagal menghubungi server API. ${err.message}</p>`;
+                detail.classList.remove('hidden');
+                console.error(err);
+            }
+        };
+
+        const handleCMPFile = async (file) => {
+            if (!file || !file.type.startsWith('image/')) return;
+            const loading = document.getElementById('loadingStateCMP');
+            const compareArea = document.getElementById('comparePanels');
+            const tableBody = document.getElementById('compareTableBody');
+            const previewY = document.getElementById('previewCMPYolo');
+            const previewM = document.getElementById('previewCMPMN');
+            const canvasY = document.getElementById('bboxCanvasCMPYolo');
+            const mnResult = document.getElementById('mnClassifyResult');
+
+            const imgUrl = URL.createObjectURL(file);
+            previewY.src = imgUrl;
+            previewM.src = imgUrl;
+            await new Promise(r => { previewY.onload = r; });
+            canvasY.width = previewY.naturalWidth; canvasY.height = previewY.naturalHeight;
+            canvasY.getContext('2d').clearRect(0, 0, canvasY.width, canvasY.height);
+
+            compareArea.classList.add('hidden');
+            loading.classList.remove('hidden');
+            tableBody.innerHTML = '';
+
+            try {
+                const [resY, resMN] = await Promise.all([
+                    callAPI(API_YOLO, file),
+                    callAPIMobileNetv4(file)
+                ]);
+                loading.classList.add('hidden');
+
+                const dY = resY.data.status === 'sukses' ? resY.data.data : [];
+                drawBoxes(canvasY, dY, COLOR_YOLO);
+
+                // YOLO species summary
+                const yoloSummary = document.getElementById('yoloSummaryResult');
+                yoloSummary.innerHTML = buildYoloSummaryHTML(dY);
+
+                // MobileNetv4 classification result
+                const mnBest = resMN.data.best;
+                mnResult.innerHTML = buildMNResultHTML(resMN.data);
+
+                // Metrics table
+                const avgConfYolo = dY.length
+                    ? (dY.reduce((s, b) => s + b.akurasi, 0) / dY.length * 100).toFixed(1) + '%'
+                    : '—';
+                const uniqueY = [...new Set(dY.map(b => b.label))].join(', ') || '—';
+
+                const rows = [
+                    ['Jumlah Deteksi / Kelas', dY.length + ' objek', '1 prediksi teratas'],
+                    ['Confidence Terbaik', avgConfYolo, mnBest.confidence.toFixed(1) + '%'],
+                    ['Waktu Inferensi', resY.elapsed.toFixed(0) + ' ms', resMN.elapsed.toFixed(0) + ' ms'],
+                    ['Spesies / Prediksi', uniqueY, mnBest.class.replace(/_/g, ' ')],
+                    ['Tipe Output', 'Bounding Box', 'Klasifikasi'],
+                ];
+
+                tableBody.innerHTML = rows.map(([label, y, mn]) => `
+                    <tr>
+                        <td class="type-caption text-apple-mid-gray px-4 py-3">${label}</td>
+                        <td class="type-body-small font-semibold text-apple-near-black px-4 py-3">${y}</td>
+                        <td class="type-body-small font-semibold text-apple-near-black px-4 py-3">${mn}</td>
+                    </tr>`).join('');
+
+                compareArea.classList.remove('hidden');
+            } catch (err) {
+                loading.classList.add('hidden');
+                tableBody.innerHTML = `<tr><td colspan="3" class="type-body-small text-red-600 px-4 py-3">Gagal: ${err.message}</td></tr>`;
+                compareArea.classList.remove('hidden');
+                console.error(err);
+            }
+        };
+
+        // ─── Dropzone Initiators ──────────────────────────────────────
+        setupDropzone('dropZone', 'imageInput', handleYoloFile);
+        setupDropzone('dropZoneMN', 'imageInputMN', handleMNFile);
+        setupDropzone('dropZoneCMP', 'imageInputCMP', handleCMPFile);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+# Daftarkan MIME type untuk format 3D model
+AddType model/gltf-binary .glb
+AddType model/gltf+json .gltf
+
+# Izinkan akses file dari domain manapun (untuk model-viewer)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
