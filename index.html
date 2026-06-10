@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="scroll-smooth scroll-pt-16">
 
 <head>
     <meta charset="UTF-8">
@@ -623,7 +623,7 @@
 
 <body class="bg-slate-50 antialiased">
 
-    <nav id="mainNav" class="nav-glass sticky top-0 z-50">
+    <nav id="mainNav" class="nav-glass fixed top-0 left-0 w-full z-50">
         <div class="max-w-[1068px] mx-auto px-5 md:px-10 py-3 flex justify-between items-center">
             <!-- Logo -->
             <a href="#" class="shrink-0" aria-label="MeLamun - Beranda">
@@ -656,7 +656,7 @@
 
     </div>
 
-    <section id="beranda" class="hero-section relative overflow-hidden -mt-[52px]">
+    <section id="beranda" class="hero-section relative overflow-hidden">
         <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none">
             <source src="assets/hero-seagrass.webm" type="video/webm">
         </video>
@@ -963,7 +963,7 @@
     <footer class="bg-[#1d1d1f] py-12 px-5 md:px-10" style="border-top:1px solid rgba(255,255,255,0.08);">
         <div class="max-w-[1068px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <a href="#" aria-label="MeLamun - Beranda" class="shrink-0">
-                <img src="assets/logo-nav.png?v=3" alt="MeLamun" class="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity" style="filter:invert(1) hue-rotate(180deg) brightness(1.2);" width="211" height="64">
+                <img src="assets/logo-nav.png?v=3" alt="MeLamun" class="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity" width="211" height="64">
             </a>
             <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                 <a href="#beranda" class="text-[13px] text-white/40 hover:text-white/80 transition-colors">Beranda</a>
@@ -1132,7 +1132,7 @@
                 navLogo.style.filter = '';
                 navLogo.style.mixBlendMode = 'multiply';
             } else {
-                navLogo.style.filter = 'invert(1) hue-rotate(180deg) brightness(1.2)';
+                navLogo.style.filter = 'drop-shadow(0 1px 4px rgba(0,0,0,0.35))';
                 navLogo.style.mixBlendMode = '';
             }
         }
